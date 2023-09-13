@@ -26,8 +26,18 @@ class LocalDataSource extends AuthDataSource {
       });
 
       return UserMapper.userJsonToEntity(response.data);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        throw CustomError(e.response?.data['message'] ?? 'Credenciales incorrectas');
+      }
+      
+      if (e.type == DioExceptionType.connectionTimeout) {
+        throw CustomError('Tiempo de conexión agotado');
+      }
+      
+      throw Exception();
     } catch (e) {
-      throw WrongCredentials();
+      throw Exception();
     }
   }
 
