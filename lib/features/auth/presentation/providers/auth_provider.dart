@@ -10,12 +10,10 @@ final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
 });
 
 class AuthNotifier extends StateNotifier<AuthState> {
-  AuthNotifier({
-    required this.authRepository
-  }): super(AuthState());
+  AuthNotifier({required this.authRepository}) : super(AuthState());
 
   final AuthRepository authRepository;
-  
+
   Future<void> loginUser(String email, String password) async {
     await Future.delayed(const Duration(milliseconds: 500));
 
@@ -29,13 +27,20 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  void registerUser(String email, String password) async {
+  void registerUser(String email, String password, String fullName) async {
+    await Future.delayed(const Duration(milliseconds: 500));
 
+    try {
+      final user = await authRepository.register(email, password, fullName);
+      _setLoggedUser(user);
+    } on CustomError catch (e) {
+      logout(e.message);
+    } catch (e) {
+      logout('Error no controlado');
+    }
   }
-  
-  void checkAuthStatus() async {
 
-  }
+  void checkAuthStatus() async {}
 
   void _setLoggedUser(User user) {
     // TODO: necesito guardar el token físicamente
@@ -49,10 +54,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> logout(String? errorMessage) async {
     // TODO: limpiar token
     state = state.copyWith(
-      authStatus: AuthStatus.notAuthenticated,
-      user: null,
-      errorMessage: errorMessage
-    );
+        authStatus: AuthStatus.notAuthenticated,
+        user: null,
+        errorMessage: errorMessage);
   }
 }
 
@@ -63,19 +67,16 @@ class AuthState {
   final User? user;
   final String errorMessage;
 
-  AuthState({
-    this.authStatus = AuthStatus.checking,
-    this.user,
-    this.errorMessage = ''
-  });
+  AuthState(
+      {this.authStatus = AuthStatus.checking,
+      this.user,
+      this.errorMessage = ''});
 
-  AuthState copyWith({
-    AuthStatus? authStatus,
-    User? user,
-    String? errorMessage
-  }) => AuthState(
-    authStatus: authStatus ?? this.authStatus,
-    user: user ?? this.user,
-    errorMessage: errorMessage ?? this.errorMessage,
-  );
+  AuthState copyWith(
+          {AuthStatus? authStatus, User? user, String? errorMessage}) =>
+      AuthState(
+        authStatus: authStatus ?? this.authStatus,
+        user: user ?? this.user,
+        errorMessage: errorMessage ?? this.errorMessage,
+      );
 }

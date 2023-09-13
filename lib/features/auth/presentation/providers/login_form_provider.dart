@@ -5,17 +5,17 @@ import 'package:teslo_shop/features/auth/presentation/providers/providers.dart';
 import 'package:teslo_shop/features/shared/shared.dart';
 
 // 3 - StateNotifierProvider (lo que se consume afuera)
-final loginFormProvider = StateNotifierProvider.autoDispose<LoginFormNotifier, LoginFormState>((ref) {
+final loginFormProvider =
+    StateNotifierProvider.autoDispose<LoginFormNotifier, LoginFormState>((ref) {
   final loginUserCallback = ref.watch(authProvider.notifier).loginUser;
-  
+
   return LoginFormNotifier(loginUserCallback: loginUserCallback);
 });
 
 // 2 - Cómo implementamos un Notifier
 class LoginFormNotifier extends StateNotifier<LoginFormState> {
-  LoginFormNotifier({
-    required this.loginUserCallback
-  }) : super(LoginFormState());
+  LoginFormNotifier({required this.loginUserCallback})
+      : super(LoginFormState());
 
   final Function(String, String) loginUserCallback;
 
