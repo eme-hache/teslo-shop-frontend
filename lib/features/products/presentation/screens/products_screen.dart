@@ -18,7 +18,10 @@ class ProductsScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Products'),
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.search_rounded))
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.search_rounded),
+          )
         ],
       ),
       body: const _ProductsView(),
