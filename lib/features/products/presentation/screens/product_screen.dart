@@ -13,6 +13,16 @@ class ProductScreen extends ConsumerWidget {
     required this.productId,
   });
 
+  void showSnackbar(BuildContext context, bool result) {
+    final String message = result
+        ? 'Producto actualizado'
+        : 'Ocurrió un error actualizando el producto';
+
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final productState = ref.watch(productProvider(productId));
@@ -36,7 +46,8 @@ class ProductScreen extends ConsumerWidget {
 
           ref
               .read(productFormProvider(productState.product!).notifier)
-              .onFormSubmit();
+              .onFormSubmit()
+              .then((value) => showSnackbar(context, value));
         },
         child: const Icon(Icons.save_as_outlined),
       ),
@@ -71,6 +82,7 @@ class _ProductView extends ConsumerWidget {
             child: Text(
               productForm.title.value,
               style: textStyles.titleSmall,
+              textAlign: TextAlign.center,
             ),
           ),
         ),
